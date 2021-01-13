@@ -15,7 +15,7 @@ var ctx = canvas.getContext("2d")
 ctx.fillStyle = "hsl(0, 100%, 50%)"
 
 // equal prob to grow up or to side
-let direction_bias = 0.5
+let up_bias = 0.5
 
 // start coord
 let x = 250
@@ -27,11 +27,9 @@ let tree = []
 // fill current, then move to next
 for (let i = 0; i < generate_count; i++) {
     ctx.fillRect(x, y, square_edge, square_edge)
-    tree.push([[x, y]])
+    tree.push([x, y])
 
-    let xy_arr = get_next_coors(direction_bias, square_edge, x, y)
+    let xy_arr = get_next_coor(up_bias, square_edge, x, y, tree)
     x = xy_arr[0]
     y = xy_arr[1]
-
-    console.log(x, y)
 }

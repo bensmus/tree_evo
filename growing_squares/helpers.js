@@ -10,28 +10,6 @@ function coinflip() {
     return Math.round(Math.random())
 }
 
-// TODO: Disable "growing back into yourself"
-
-function get_next_coors(
-    upside_bias, square_edge, current_x, current_y) {
-
-    up = Math.round(get_rand_bias(upside_bias))
-
-    if (up) {
-        return [current_x, current_y - square_edge]
-    }
-
-    else {
-        if (coinflip()) {
-            return [current_x + square_edge, current_y]
-        }
-        else {
-            return [current_x - square_edge, current_y]
-        }
-    }
-
-}
-
 function snap(in_number, list_of_numbers) {
 
     // snapped number
@@ -46,3 +24,59 @@ function snap(in_number, list_of_numbers) {
 
     return out_number
 }
+
+// TODO: Disable "growing back into yourself"
+function get_possible_obj(square_edge, current_x, current_y, tree) {
+    possible = {
+        "up": [
+            [current_x, current_y - square_edge]
+        ],
+        "horiz": [
+            [current_x + square_edge, current_y],
+            [current_x - square_edge, current_y]
+        ]
+    }
+
+    for (const key in possible) {
+        for (let i = 0; i < possible[key].length; i++) {
+            for (let j = 0; j < tree.length; j++) {
+                if (JSON.stringify(possible[key][i]) == JSON.stringify(tree[j])) {
+                    console.log("cat");
+                    possible[key].splice(i, 1)
+                }
+            }
+        }
+    }
+    return possible
+}
+
+function random_select_from_possible(up_bias, possible) {
+    up = Math.round(get_rand_bias(up_bias))
+
+    if (up) {
+        return possible["up"][0]
+    }
+
+    else {
+        if (possible["horiz"].length == 2) {
+            if (coinflip()) {
+                return possible["horiz"][0]
+            }
+            else {
+                return possible["horiz"][1]
+            }
+        }
+        else {
+            return possible["horiz"][0]
+        }
+    }
+}
+
+function get_next_coor(
+    up_bias, square_edge, current_x, current_y, tree) {
+
+    possible = get_possible_obj(square_edge, current_x, current_y, tree)
+    next = random_select_from_possible(up_bias, possible)
+    return next
+}
+
